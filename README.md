@@ -63,4 +63,4 @@ npm run lint -- --fix
 
 [MIT](https://github.com/PanJiaChen/vue-admin-template/blob/master/LICENSE) license.
 
-Copyright (c) 2017-present PanJiaChen
+Copyright (c) 2020-present CrazyJack262
