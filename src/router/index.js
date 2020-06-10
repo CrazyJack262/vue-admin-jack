@@ -174,6 +174,12 @@ export const constantRoutes = [
         name: 'User',
         component: () => import('@/views/manage/index2'),
         meta: { title: '权限管理' }
+      },
+      {
+        path: 'api',
+        name: 'Api',
+        component: () => import('@/views/manage/api'),
+        meta: { title: '开发文档' }
       }
     ]
   },
