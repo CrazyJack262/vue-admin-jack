@@ -150,29 +150,41 @@ export const constantRoutes = [
   {
     path: '/manage',
     component: Layout,
-    redirect: '/manage/index',
-    name: 'Nested',
+    redirect: '/manage/menu1',
+    name: 'manage',
     meta: {
       title: '系统管理',
       icon: 'setting'
     },
     children: [
       {
-        path: 'index',
-        name: 'User',
-        component: () => import('@/views/manage/index'),
-        meta: { title: '用户管理' }
+        path: 'manage-menu1',
+        component: () => import('@/views/manage/menu1/index'), // Parent router-view
+        name: 'Menu1',
+        meta: { title: '用户管理' },
+        children: [
+          {
+            path: 'manage-menu1-1',
+            component: () => import('@/views/manage/menu1/menu1-1'),
+            name: 'Menu1-1',
+            meta: { title: '用户列表' }
+          },
+          {
+            path: 'manage-menu1-3',
+            component: () => import('@/views/manage/menu1/menu1-3'),
+            name: 'Menu1-3',
+            meta: { title: '部门架构' }
+          }
+        ]
       },
       {
-        path: 'index2',
-        name: 'User',
-        component: () => import('@/views/manage/index2'),
+        path: 'menu2',
+        component: () => import('@/views/nested/menu2/index'),
         meta: { title: '资源管理' }
       },
       {
-        path: 'index3',
-        name: 'User',
-        component: () => import('@/views/manage/index2'),
+        path: 'menu3',
+        component: () => import('@/views/nested/menu2/index'),
         meta: { title: '权限管理' }
       },
       {
