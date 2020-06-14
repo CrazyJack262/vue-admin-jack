@@ -159,20 +159,20 @@ export const constantRoutes = [
     children: [
       {
         path: 'manage-menu1',
-        component: () => import('@/views/manage/menu1/index'), // Parent router-view
+        component: () => import('@/views/manage/user/index'), // Parent router-view
         name: 'Menu1',
         meta: { title: '用户管理' },
         children: [
           {
-            path: 'manage-menu1-1',
-            component: () => import('@/views/manage/menu1/menu1-1'),
-            name: 'Menu1-1',
+            path: 'user',
+            component: () => import('@/views/manage/user/user'),
+            name: 'user',
             meta: { title: '用户列表' }
           },
           {
-            path: 'manage-menu1-3',
-            component: () => import('@/views/manage/menu1/menu1-3'),
-            name: 'Menu1-3',
+            path: 'org',
+            component: () => import('@/views/manage/user/org'),
+            name: 'org',
             meta: { title: '部门架构' }
           }
         ]
