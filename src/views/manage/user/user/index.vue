@@ -2,8 +2,8 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.title" placeholder="用户名" style="width: 200px;" class="filter-item" />
-      <el-select v-model="listQuery.importance" placeholder="客户状态" clearable style="width: 200px" class="filter-item">
-        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
+      <el-select v-model="listQuery.userStatusOptions" placeholder="客户状态" clearable style="width: 200px" class="filter-item">
+        <el-option v-for="item in userStatusOptions" :key="item" :label="item.value" :value="item.key" />
       </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search">
         Search
@@ -18,16 +18,14 @@
       highlight-current-row
       style="width: 100%;margin-top: 20px"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80" />
+      <el-table-column label="ID" prop="id" align="center" width="80" />
       <el-table-column label="Date" width="150px" align="center" />
       <el-table-column label="Title" min-width="150px" />
       <el-table-column label="Author" width="110px" align="center" />
-      <el-table-column v-if="showReviewer" label="Reviewer" width="110px" align="center" />
       <el-table-column label="Imp" width="80px" />
       <el-table-column label="Readings" align="center" width="95" />
       <el-table-column label="Status" class-name="status-col" width="100" />
     </el-table>
-    <my />
     <pagination v-show="total>=0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" />
   </div>
 </template>
@@ -54,10 +52,7 @@ export default {
         type: undefined,
         sort: '+id'
       },
-      importanceOptions: [1, 2, 3],
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: ['published', 'draft', 'deleted'],
-      showReviewer: false,
+      userStatusOptions: [{ key: 0, value: '正常' }, { key: 1, value: '异常' }],
       temp: {
         id: undefined,
         importance: 1,
@@ -75,11 +70,6 @@ export default {
       },
       dialogPvVisible: false,
       pvData: [],
-      rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
-      },
       downloadLoading: false
     }
   }
