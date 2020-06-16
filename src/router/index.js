@@ -160,7 +160,7 @@ export const constantRoutes = [
       {
         path: 'manage-menu1',
         component: () => import('@/views/manage/user/index'), // Parent router-view
-        name: 'Menu1',
+        name: 'manage-user',
         meta: { title: '用户管理' },
         children: [
           {

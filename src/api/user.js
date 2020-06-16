@@ -14,3 +14,11 @@ export function getInfo() {
     method: 'get'
   })
 }
+
+export function fetchList(query) {
+  return request({
+    url: '/users/search',
+    method: 'get',
+    params: query
+  })
+}
