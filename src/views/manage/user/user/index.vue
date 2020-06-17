@@ -21,7 +21,6 @@
       fit
       highlight-current-row
       style="width: 100%;margin-top: 20px"
-      @current-change="handleSelectionChange"
     >
       <el-table-column label="ID" prop="id" align="center" min-width="15">
         <template slot-scope="{row}">
@@ -65,7 +64,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" icon="el-third-icon-edit" @click="handleUpdate(row)">
+          <el-button type="primary" size="mini" icon="el-third-icon-edit" @click="handleEdit(row)">
             编辑
           </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" icon="el-third-icon-delete" type="danger" @click="handleDelete(row,$index)">
@@ -75,6 +74,36 @@
       </el-table-column>
     </el-table>
     <pagination v-show="total>=0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+      <el-form ref="dataForm" :model="tempUser" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+        <el-form-item label="客户状态">
+          <el-select v-model="tempUser.userStatus" placeholder="客户状态" class="filter-item" style="width: 330px">
+            <el-option v-for="item in userStatusOptions" :key="item.key" :label="item.value" :value="item.key" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="登录名">
+          <el-input v-model="tempUser.loginName" :disabled="dialogStatus==='create'?false:true" />
+        </el-form-item>
+        <el-form-item label="用户名称">
+          <el-input v-model="tempUser.userName" />
+        </el-form-item>
+        <el-form-item label="电话号码">
+          <el-input v-model="tempUser.userPhone" />
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input v-model="tempUser.remark" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+          确定
+        </el-button>
+      </div>
+    </el-dialog>
 
   </div>
 </template>
@@ -108,31 +137,25 @@ export default {
         1: '异常'
       },
       textMap: {
-        delete: '删除',
-        update: '更新',
-        create: '新增'
+        edit: '编辑用户',
+        create: '新增用户'
       },
       dialogPvVisible: false,
-      temp: {
+      tempUser: {
         id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        type: '',
-        status: 'published'
+        loginName: '',
+        userName: '',
+        userPhone: '',
+        userStatus: 0,
+        remark: ''
       },
-      downloadLoading: false,
-      multipleTable: [] // 存放选中值的数组
+      downloadLoading: false
     }
   },
   created() {
     this.getList()
   },
   methods: {
-    handleSelectionChange(val) {
-      this.multipleTable = val
-    },
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
@@ -146,14 +169,13 @@ export default {
       })
     },
     resetTemp() {
-      this.temp = {
+      this.tempUser = {
         id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
+        loginName: '',
+        userName: '',
+        userPhone: '',
+        userStatus: 0,
+        remark: ''
       }
     },
     handleSearch() {
@@ -164,16 +186,28 @@ export default {
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
+    },
+    handleDelete(row, index) {
+      this.$confirm('确定要删除 ' + row.userName + ' 用户？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$notify({
+          title: '成功',
+          message: '用户删除成功！',
+          type: 'success',
+          duration: 2000
+        })
+        this.list.splice(index, 1)
+        this.total--
+      }).catch(() => {
       })
     },
-    handleDelete() {
-      alert('delete')
-    },
-    handleUpdate(row) {
-      console.log(row)
-      alert('update')
+    handleEdit(row) {
+      this.tempUser = row
+      this.dialogStatus = 'edit'
+      this.dialogFormVisible = true
     }
 
   }
