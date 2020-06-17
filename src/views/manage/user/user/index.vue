@@ -6,7 +6,16 @@
         <el-option v-for="item in userStatusOptions" :key="item.key" :label="item.value" :value="item.key" />
       </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        Search
+        查询
+      </el-button>
+      <el-button v-waves class="filter-item" type="primary" icon="icon-add" @click="handleFilter">
+        新增
+      </el-button>
+      <el-button v-waves class="filter-item" type="primary" icon="icon-delete" @click="handleFilter">
+        删除
+      </el-button>
+      <el-button v-waves class="filter-item" type="primary" icon="icon-update" @click="handleFilter">
+        更新
       </el-button>
     </div>
     <el-table
@@ -54,7 +63,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <pagination v-show="total>=0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
   </div>
 </template>
 
@@ -103,7 +112,7 @@ export default {
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
-        }, 1.5 * 300)
+        }, 1.5 * 260)
       })
     },
     handleFilter() {

@@ -1,0 +1,30 @@
+{
+  "id": "1890600",
+  "name": "vue-jack-admin",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "554022",
+      "name": "删除",
+      "font_class": "delete",
+      "unicode": "e61a",
+      "unicode_decimal": 58906
+    },
+    {
+      "icon_id": "1817752",
+      "name": "更新",
+      "font_class": "update",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
+      "icon_id": "12875297",
+      "name": "新增",
+      "font_class": "add",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    }
+  ]
+}
