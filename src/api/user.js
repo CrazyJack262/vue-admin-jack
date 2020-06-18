@@ -47,7 +47,6 @@ export function updateUserById(data) {
 }
 
 export function deleteUserById(id) {
-  console.log(id)
   return request({
     url: '/users/' + id,
     method: 'delete'
