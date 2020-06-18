@@ -27,7 +27,7 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="登录名" align="center" min-width="40">
+      <el-table-column label="登录账号" align="center" min-width="40">
         <template slot-scope="{row}">
           <span>{{ row.loginName }}</span>
         </template>
@@ -62,33 +62,58 @@
           {{ statusMap[row.userStatus] }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="360" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-third-icon-edit" @click="handleEdit(row)">
             编辑
           </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" icon="el-third-icon-delete" type="danger" @click="handleDelete(row,$index)">
+          <el-button type="success" size="mini" icon="el-icon-refresh" style="font-size: 14px" @click="handleReset(row)">
+            重置
+          </el-button>
+          <el-button
+            size="mini"
+            icon="el-third-icon-delete"
+            type="danger"
+            @click="handleDelete(row,$index)"
+          >
             删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-show="total>=0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <pagination
+      v-show="total>=0"
+      :total="total"
+      :page.sync="listQuery.page"
+      :limit.sync="listQuery.limit"
+      @pagination="getList"
+    />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :model="tempUser" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="客户状态">
+      <el-form
+        ref="dataForm"
+        :model="tempUser"
+        :rules="rules"
+        label-position="left"
+        label-width="70px"
+        style="width: 400px; margin-left:50px;"
+        :hide-required-asterisk="true"
+      >
+        <el-form-item label="用户状态">
           <el-select v-model="tempUser.userStatus" placeholder="客户状态" class="filter-item" style="width: 330px">
             <el-option v-for="item in userStatusOptions" :key="item.key" :label="item.value" :value="item.key" />
           </el-select>
         </el-form-item>
-        <el-form-item label="登录名">
+        <el-form-item label="登录账号" prop="loginName">
           <el-input v-model="tempUser.loginName" :disabled="dialogStatus==='create'?false:true" />
         </el-form-item>
-        <el-form-item label="用户名称">
+        <el-form-item v-if="dialogStatus==='create'" label="登录密码" prop="loginPassword">
+          <el-input v-model="tempUser.loginPassword" show-password />
+        </el-form-item>
+        <el-form-item label="用户名称" prop="userName">
           <el-input v-model="tempUser.userName" />
         </el-form-item>
-        <el-form-item label="电话号码">
+        <el-form-item label="电话号码" prop="userPhone">
           <el-input v-model="tempUser.userPhone" />
         </el-form-item>
         <el-form-item label="备注">
@@ -105,11 +130,37 @@
       </div>
     </el-dialog>
 
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="resetDialogFormVisible">
+      <el-form
+        ref="resetDataForm"
+        :model="tempUser"
+        :rules="rules"
+        label-position="left"
+        label-width="70px"
+        style="width: 400px; margin-left:50px;"
+        :hide-required-asterisk="true"
+      >
+        <el-form-item label="登录账号" prop="loginName">
+          <el-input v-model="tempUser.loginName" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="登录密码" prop="loginPassword">
+          <el-input v-model="tempUser.loginPassword" show-password />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="resetDialogFormVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="handleResetData()">
+          确定
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchList } from '@/api/user'
+import { searchList, saveUser, deleteUserById, updateUserById } from '@/api/user'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 
@@ -131,6 +182,7 @@ export default {
       },
       userStatusOptions: [{ key: 0, value: '正常' }, { key: 1, value: '异常' }],
       dialogFormVisible: false,
+      resetDialogFormVisible: false,
       dialogStatus: '',
       statusMap: {
         0: '正常',
@@ -138,7 +190,8 @@ export default {
       },
       textMap: {
         edit: '编辑用户',
-        create: '新增用户'
+        create: '新增用户',
+        reset: '密码重置'
       },
       dialogPvVisible: false,
       tempUser: {
@@ -147,9 +200,16 @@ export default {
         userName: '',
         userPhone: '',
         userStatus: 0,
+        loginPassword: '',
         remark: ''
       },
-      downloadLoading: false
+      downloadLoading: false,
+      rules: {
+        loginName: [{ required: true, message: '登录账号不能为空', trigger: 'blur' }],
+        userName: [{ required: true, message: '用户名称不能为空', trigger: 'blur' }],
+        userPhone: [{ required: true, message: '电话号码不能为空', trigger: 'blur' }],
+        loginPassword: [{ required: true, message: '登录密码不能为空', trigger: 'blur' }]
+      }
     }
   },
   created() {
@@ -158,14 +218,14 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(response => {
+      searchList(this.listQuery).then(response => {
         this.list = response.data.records
         this.total = response.data.total
 
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
-        }, 1.5 * 260)
+        }, 1.5 * 200)
       })
     },
     resetTemp() {
@@ -175,6 +235,7 @@ export default {
         userName: '',
         userPhone: '',
         userStatus: 0,
+        loginPassword: '',
         remark: ''
       }
     },
@@ -186,6 +247,9 @@ export default {
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
     },
     handleDelete(row, index) {
       this.$confirm('确定要删除 ' + row.userName + ' 用户？', '提示', {
@@ -193,6 +257,10 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        deleteUserById(row.id).then(response => {
+          const data = response.data
+          console.log(data)
+        })
         this.$notify({
           title: '成功',
           message: '用户删除成功！',
@@ -201,19 +269,77 @@ export default {
         })
         this.list.splice(index, 1)
         this.total--
-      }).catch(() => {
+      })
+    },
+    handleReset(row) {
+      this.tempUser = row
+      this.dialogStatus = 'reset'
+      this.resetDialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['resetDataForm'].clearValidate()
+      })
+    },
+    handleResetData() {
+      this.$refs['resetDataForm'].validate((valid) => {
+        if (valid) {
+          updateUserById({ id: this.tempUser.id, version: this.tempUser.version, loginPassword: this.tempUser.loginPassword }).then(() => {
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '用户密码重置成功',
+              type: 'success',
+              duration: 2000
+            })
+            this.getList()
+            this.resetDialogFormVisible = false
+          })
+        }
       })
     },
     handleEdit(row) {
       this.tempUser = row
       this.dialogStatus = 'edit'
       this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    createData() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          const tempData = Object.assign({}, this.tempUser)
+          saveUser(tempData).then(() => {
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '用户新增成功',
+              type: 'success',
+              duration: 2000
+            })
+          })
+        }
+      })
+    },
+    updateData() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          const tempData = Object.assign({}, this.tempUser)
+          updateUserById(tempData).then(() => {
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '用户更新成功',
+              type: 'success',
+              duration: 2000
+            })
+            this.getList()
+          })
+        }
+      })
     }
-
   }
 }
 </script>
 
 <style scoped>
-
 </style>
