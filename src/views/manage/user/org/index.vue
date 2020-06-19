@@ -115,12 +115,6 @@ export default {
 </script>
 
 <style scoped>
-  .panel-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 0;
-    margin-top: 0;
-  }
   .org-left{
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     border-radius: 4px
