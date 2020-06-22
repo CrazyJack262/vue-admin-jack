@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item" />
+      <el-input v-model="listQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleSearch" />
       <el-select v-model="listQuery.userStatus" placeholder="客户状态" clearable style="width: 200px" class="filter-item">
         <el-option v-for="item in userStatusOptions" :key="item.key" :label="item.value" :value="item.key" />
       </el-select>
@@ -178,7 +178,7 @@ export default {
         page: 1,
         limit: 10,
         username: undefined,
-        userStatus: undefined
+        userStatus: 0
       },
       userStatusOptions: [{ key: 0, value: '正常' }, { key: 1, value: '异常' }],
       dialogFormVisible: false,
