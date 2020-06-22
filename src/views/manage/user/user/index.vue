@@ -1,6 +1,7 @@
 <template>
-  <div class="app-container">
-    <div class="filter-container">
+  <div class="app-container shadow">
+    <dividing-line :title="'用户管理'" />
+    <div class="filter-container" style="margin-top: 10px">
       <el-input v-model="listQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleSearch" />
       <el-select v-model="listQuery.userStatus" placeholder="客户状态" clearable style="width: 200px" class="filter-item">
         <el-option v-for="item in userStatusOptions" :key="item.key" :label="item.value" :value="item.key" />
@@ -163,10 +164,11 @@
 import { searchList, saveUser, deleteUserById, updateUserById } from '@/api/user'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
+import DividingLine from '@/components/DividingLine'
 
 export default {
   name: 'User',
-  components: { Pagination },
+  components: { DividingLine, Pagination },
   directives: { waves },
   data() {
     return {
@@ -342,4 +344,5 @@ export default {
 </script>
 
 <style scoped>
+
 </style>
