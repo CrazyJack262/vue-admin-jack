@@ -24,13 +24,14 @@
             :filter-node-method="filterNode"
             class="filter-tree"
             node-key="id"
+            default-expand-all
             @node-click="nodeClick"
           />
         </div>
       </el-col>
       <el-col :span="14" class="org-right">
         <div class="grid-content bg-purple" style="margin-top: 10px">
-          <dividing-line :title="'成员维护'" />
+          <dividing-line :title="selectOrgTitle" />
           <div style="margin-top: 10px">
             <el-input
               v-model="listQuery.username"
@@ -120,16 +121,16 @@
           v-model="selectListQuery.username"
           placeholder="用户名称"
           style="margin-bottom:30px;width: 270px"
-          @keyup.enter.native="handleSearch"
+          @keyup.enter.native="handleSelectSearch"
         />
         <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleSelectSearch">
           查询
         </el-button>
-        <el-button v-waves class="filter-item" type="primary" icon="el-icon-s-claim">
+        <el-button v-waves class="filter-item" type="primary" icon="el-icon-s-claim" @click="saveOrgUserData">
           保存
         </el-button>
         <el-table
-          ref="multipleTable"
+          ref="saveMultipleTable"
           v-loading="selectListLoading"
           :data="selectList"
           tooltip-effect="dark"
@@ -202,8 +203,15 @@
         style="width: 400px; margin-left:50px;"
         :hide-required-asterisk="true"
       >
-        <el-form-item v-if="orgStatus === 'orgAdd'" label="上级部门" prop="org">
-          <el-select v-model="tempOrg.orgId" clearable style="width: 300px" class="filter-item" />
+        <el-form-item v-if="orgStatus === 'orgAdd'" label="上级部门" prop="orgPid">
+          <el-select v-model="tempOrg.orgPid" filterable style="width: 300px" class="filter-item">
+            <el-option
+              v-for="item in orgList"
+              :key="item.id"
+              :label="item.orgName"
+              :value="item.id"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="部门名称" prop="orgName">
           <el-input v-model="tempOrg.orgName" style="width: 300px" />
@@ -223,11 +231,11 @@
 </template>
 
 <script>
-import { searchList } from '@/api/user'
+import { searchOrgList } from '@/api/user'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import DividingLine from '@/components/DividingLine'
-import { getTrees, updateOrgyId } from '@/api/org'
+import { deleteOrgById, getOrgList, getTrees, saveOrg, updateOrgyId, saveOrgUser, deleteOrgUserByUserId } from '@/api/org'
 
 export default {
   name: 'Org',
@@ -241,7 +249,7 @@ export default {
         version: undefined
       },
       rules: {
-        org: [{ required: true, message: '上级部门不能为空', trigger: 'blur' }],
+        orgPid: [{ required: true, message: '上级部门不能为空', trigger: 'blur' }],
         orgName: [{ required: true, message: '部门名称不能为空', trigger: 'blur' }]
       },
       orgStatus: null,
@@ -258,13 +266,15 @@ export default {
         page: 1,
         limit: 10,
         username: undefined,
-        orgId: undefined
+        orgId: undefined,
+        orgStatus: 0
       },
       selectListQuery: {
         page: 1,
         limit: 10,
         username: undefined,
-        orgId: undefined
+        orgId: undefined,
+        orgStatus: 1
       },
       list: null,
       selectList: null,
@@ -281,7 +291,9 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'label'
-      }
+      },
+      orgList: null,
+      selectOrgTitle: '成员维护'
     }
   },
   watch: {
@@ -290,8 +302,8 @@ export default {
     }
   },
   created() {
-    this.getList()
     this.getTrees()
+    this.getOrgList()
   },
   methods: {
     filterNode(value, data) {
@@ -299,16 +311,30 @@ export default {
       return data.label.indexOf(value) !== -1
     },
     handleSearch() {
+      if (this.listQuery.orgId === undefined) {
+        this.$message({
+          message: '请选择一个部门',
+          type: 'warning'
+        })
+        return
+      }
       this.listQuery.page = 1
       this.getList()
     },
     handleSelectSearch() {
+      if (this.selectListQuery.orgId === undefined) {
+        this.$message({
+          message: '请选择要查询的部门',
+          type: 'warning'
+        })
+        return
+      }
       this.selectListQuery.page = 1
       this.getSelectList()
     },
     getSelectList() {
       this.selectListLoading = true
-      searchList(this.selectListQuery).then(response => {
+      searchOrgList(this.selectListQuery).then(response => {
         this.selectList = response.data.records
         this.selectTotal = response.data.total
 
@@ -320,7 +346,7 @@ export default {
     },
     getList() {
       this.listLoading = true
-      searchList(this.listQuery).then(response => {
+      searchOrgList(this.listQuery).then(response => {
         this.list = response.data.records
         this.total = response.data.total
 
@@ -328,6 +354,11 @@ export default {
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 200)
+      })
+    },
+    getOrgList() {
+      getOrgList().then(response => {
+        this.orgList = response.data
       })
     },
     getTrees() {
@@ -346,47 +377,85 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // deleteUserById(row.id).then(response => {
-        //   const data = response.data
-        //   console.log(data)
-        // })
-        this.$notify({
-          title: '成功',
-          message: '用户移除成功！',
-          type: 'success',
-          duration: 2000
+        deleteOrgUserByUserId(row.id).then(response => {
+          const data = response.data
+          if (data) {
+            this.$notify({
+              title: '成功',
+              message: '用户移除成功！',
+              type: 'success',
+              duration: 2000
+            })
+            this.list.splice(index, 1)
+            this.total--
+          } else {
+            this.$notify({
+              title: '失败',
+              message: '用户移除失败！',
+              type: 'error',
+              duration: 2000
+            })
+          }
         })
-        this.list.splice(index, 1)
-        this.total--
-      })
+      }).catch(
+        action => {
+        }
+      )
     },
     handleOrgDelete() {
-      this.$confirm('确定移除部门？', '提示', {
+      if (this.tempOrg.id === undefined) {
+        this.$message({
+          message: '请选择要删除的部门',
+          type: 'warning'
+        })
+        return
+      }
+      this.$confirm('确定移除 ' + this.tempOrg.orgName + ' 部门？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // deleteUserById(row.id).then(response => {
-        //   const data = response.data
-        //   console.log(data)
-        // })
-        this.$notify({
-          title: '成功',
-          message: '部门移除成功！',
-          type: 'success',
-          duration: 2000
+        deleteOrgById(this.tempOrg.id).then(response => {
+          const data = response.data
+          if (data === true) {
+            this.$notify({
+              title: '成功',
+              message: '部门移除成功！',
+              type: 'success',
+              duration: 2000
+            })
+          } else {
+            this.$notify({
+              title: '失败',
+              message: '部门移除失败！',
+              type: 'error',
+              duration: 2000
+            })
+          }
         })
-      })
+      }).catch(
+        action => {
+        }
+      )
     },
     resetTemp() {
       this.tempOrg = {
         id: undefined,
-        orgName: undefined
+        orgName: undefined,
+        version: undefined
       }
     },
     handleAdd() {
+      if (this.listQuery.orgId === undefined) {
+        this.$message({
+          message: '请选择一个部门',
+          type: 'warning'
+        })
+        return
+      }
       this.resetTemp()
       this.dialogFormVisible = true
+      this.getSelectList()
     },
     handleOrgAdd() {
       this.resetTemp()
@@ -397,6 +466,13 @@ export default {
       })
     },
     handleOrgEdit() {
+      if (this.tempOrg.id === undefined) {
+        this.$message({
+          message: '请选择要编辑的部门',
+          type: 'warning'
+        })
+        return
+      }
       this.orgStatus = 'orgEdit'
       this.orgDialogFormVisible = true
       this.$nextTick(() => {
@@ -407,10 +483,53 @@ export default {
       this.tempOrg.id = data.id
       this.tempOrg.orgName = data.label
       this.tempOrg.version = data.version
-      console.log(this.tempOrg)
+      this.listQuery.orgId = data.id
+      this.selectListQuery.orgId = data.id
+      this.selectOrgTitle = data.label + '-成员维护'
+      this.getList()
     },
     saveData() {
-      console.log('新增')
+      this.$refs['orgDataForm'].validate((valid) => {
+        if (valid) {
+          const tempData = Object.assign({}, this.tempOrg)
+          saveOrg(tempData).then((response) => {
+            this.orgDialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '部门新增成功',
+              type: 'success',
+              duration: 2000
+            })
+            this.getTrees()
+            this.getOrgList()
+          })
+        }
+      })
+    },
+    saveOrgUserData() {
+      const selection = this.$refs.saveMultipleTable.selection
+      if (selection.length === 0) {
+        this.dialogFormVisible = false
+        return 0
+      }
+      const newList = []
+      selection.forEach(item => {
+        newList.push(item.id)
+      })
+      const tempData = { orgId: this.selectListQuery.orgId, userList: newList }
+      console.log(tempData)
+      saveOrgUser(tempData).then((response) => {
+        this.dialogFormVisible = false
+        if (response.data === true) {
+          this.$notify({
+            title: '成功',
+            message: '新增部门用户成功',
+            type: 'success',
+            duration: 2000
+          })
+          this.getList()
+        }
+      })
     },
     updateData() {
       this.$refs['orgDataForm'].validate((valid) => {
@@ -434,7 +553,6 @@ export default {
               })
             }
             this.getTrees()
-            this.$refs.tree.setCheckedKeys([3])
           })
         }
       })
