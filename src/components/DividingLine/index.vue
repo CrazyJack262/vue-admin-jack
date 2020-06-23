@@ -9,8 +9,12 @@
 export default {
   name: 'DividingLine',
   props: {
-    title: String
+    title: {
+      type: String,
+      required: true
+    }
   }
+
 }
 </script>
 
