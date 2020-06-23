@@ -271,7 +271,10 @@ export default {
         })
         this.list.splice(index, 1)
         this.total--
-      })
+      }).catch(
+        action => {
+        }
+      )
     },
     handleReset(row) {
       this.tempUser = row

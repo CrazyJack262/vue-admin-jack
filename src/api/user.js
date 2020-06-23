@@ -23,6 +23,14 @@ export function searchList(query) {
   })
 }
 
+export function searchOrgList(query) {
+  return request({
+    url: '/users/org/search',
+    method: 'get',
+    params: query
+  })
+}
+
 export function saveUser(data) {
   return request({
     url: '/users',
