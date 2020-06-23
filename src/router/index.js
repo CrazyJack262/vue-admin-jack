@@ -158,9 +158,8 @@ export const constantRoutes = [
     },
     children: [
       {
-        path: 'manage-menu1',
+        path: 'manage-user',
         component: () => import('@/views/manage/user/index'), // Parent router-view
-        name: 'manage-user',
         meta: { title: '用户管理' },
         children: [
           {
@@ -178,14 +177,33 @@ export const constantRoutes = [
         ]
       },
       {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        meta: { title: '资源管理' }
+        path: 'manage-resource',
+        component: () => import('@/views/manage/resource/index'),
+        meta: { title: '资源管理' },
+        children: [
+          {
+            path: 'config',
+            component: () => import('@/views/manage/resource/config'),
+            meta: { title: '资源配置' }
+          }
+        ]
       },
       {
-        path: 'menu3',
-        component: () => import('@/views/nested/menu2/index'),
-        meta: { title: '权限管理' }
+        path: 'manage-role',
+        component: () => import('@/views/manage/role/index'),
+        meta: { title: '权限管理' },
+        children: [
+          {
+            path: 'role-config',
+            component: () => import('@/views/manage/role/config'),
+            meta: { title: '角色管理' }
+          },
+          {
+            path: 'menu-config',
+            component: () => import('@/views/manage/role/menu'),
+            meta: { title: '功能权限' }
+          }
+        ]
       },
       {
         path: 'api',
