@@ -150,7 +150,6 @@ export const constantRoutes = [
   {
     path: '/manage',
     component: Layout,
-    redirect: '/manage/menu1',
     name: 'manage',
     meta: {
       title: '系统管理',
@@ -180,6 +179,7 @@ export const constantRoutes = [
         path: 'manage-resource',
         component: () => import('@/views/manage/resource/index'),
         meta: { title: '资源管理' },
+        alwaysShow: true,
         children: [
           {
             path: 'config',

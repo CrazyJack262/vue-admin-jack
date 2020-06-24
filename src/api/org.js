@@ -14,7 +14,7 @@ export function getOrgList() {
   })
 }
 
-export function updateOrgyId(data) {
+export function updateOrgById(data) {
   return request({
     url: '/org/' + data.id,
     method: 'put',
