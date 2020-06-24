@@ -25,6 +25,7 @@
             class="filter-tree"
             node-key="id"
             default-expand-all
+            :expand-on-click-node="false"
             @node-click="nodeClick"
           />
         </div>
