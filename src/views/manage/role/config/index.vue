@@ -107,6 +107,7 @@
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import DividingLine from '@/components/DividingLine'
+import { deleteRoleById, getRoleList, saveRole, updateRoleyId } from '@/api/role'
 
 export default {
   name: 'RoleConfig',
@@ -143,29 +144,99 @@ export default {
   },
   methods: {
     getList() {
-      console.log('getList')
+      this.listLoading = true
+      getRoleList(this.listQuery).then(response => {
+        this.list = response.data.records
+        this.total = response.data.total
+
+        // Just to simulate the time of the request
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 200)
+      })
+    },
+    resetTemp() {
+      this.tempRole = {
+        roleName: null,
+        roleDesc: null
+      }
     },
     handleSearch() {
-      console.log('search')
+      this.listQuery.page = 1
+      this.getList()
     },
     handleAdd() {
+      this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
-      console.log('add')
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
     },
     handleEdit(row) {
-      console.log('edit')
-      console.log(row)
+      this.tempRole = row
+      this.dialogStatus = 'edit'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
     },
-    handleDelete(row) {
-      console.log('delete')
-      console.log(row)
+    handleDelete(row, index) {
+      this.$confirm('确定要删除 ' + row.roleName + ' 角色？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteRoleById(row.id).then(response => {
+          const data = response.data
+          console.log(data)
+        })
+        this.$notify({
+          title: '成功',
+          message: '角色删除成功！',
+          type: 'success',
+          duration: 2000
+        })
+        this.list.splice(index, 1)
+        this.total--
+      }).catch(
+        action => {
+        }
+      )
     },
     createData() {
-      console.log('新增数据')
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          const tempData = Object.assign({}, this.tempRole)
+          saveRole(tempData).then(() => {
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '角色新增成功',
+              type: 'success',
+              duration: 2000
+            })
+            this.getList()
+          })
+        }
+      })
     },
     updateData() {
-      console.log('更新数据')
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          const tempData = Object.assign({}, this.tempRole)
+          updateRoleyId(tempData).then(() => {
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '角色更新成功',
+              type: 'success',
+              duration: 2000
+            })
+            this.getList()
+          })
+        }
+      })
     }
   }
 }
