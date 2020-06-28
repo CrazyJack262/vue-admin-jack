@@ -481,13 +481,20 @@ export default {
       })
     },
     nodeClick(data) {
-      this.tempOrg.id = data.id
-      this.tempOrg.orgName = data.label
-      this.tempOrg.version = data.version
-      this.listQuery.orgId = data.id
-      this.selectListQuery.orgId = data.id
-      this.selectOrgTitle = data.label + '-成员维护'
-      this.getList()
+      if (data.id !== 1) {
+        this.tempOrg.id = data.id
+        this.tempOrg.orgName = data.label
+        this.tempOrg.version = data.version
+        this.listQuery.orgId = data.id
+        this.selectListQuery.orgId = data.id
+        this.selectOrgTitle = data.label + '-成员维护'
+        this.getList()
+      } else {
+        this.$message({
+          message: '顶级部门不能选中',
+          type: 'warning'
+        })
+      }
     },
     saveData() {
       this.$refs['orgDataForm'].validate((valid) => {
