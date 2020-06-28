@@ -7,6 +7,20 @@ export function getTrees() {
   })
 }
 
+export function getTreeList() {
+  return request({
+    url: '/menu/listAll',
+    method: 'get'
+  })
+}
+
+export function getById(id) {
+  return request({
+    url: '/menu/' + id,
+    method: 'get'
+  })
+}
+
 export function updateMenuById(data) {
   return request({
     url: '/menu/' + data.id,
