@@ -192,7 +192,7 @@ import { deleteMenuById, getById, getTreeList, getTrees, saveMenu, updateMenuByI
 import { deleteResourceById, saveResource, searchResource, updateResourceById } from '@/api/resource'
 
 export default {
-  name: 'Menu',
+  name: 'Resource',
   components: { DividingLine, Pagination },
   directives: { waves },
   data() {
