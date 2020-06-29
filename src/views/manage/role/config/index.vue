@@ -9,10 +9,10 @@
         class="filter-item"
         @keyup.enter.native="handleSearch"
       />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleSearch">
+      <el-button v-waves class="filter-item" type="primary" @click="handleSearch">
         查询
       </el-button>
-      <el-button v-waves class="filter-item" type="primary" icon="el-third-icon-add-copy" @click="handleAdd">
+      <el-button v-waves class="filter-item" type="primary" @click="handleAdd">
         新增
       </el-button>
     </div>
@@ -53,12 +53,11 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="360" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" icon="el-third-icon-edit" @click="handleEdit(row)">
+          <el-button type="primary" size="mini" @click="handleEdit(row)">
             编辑
           </el-button>
           <el-button
             size="mini"
-            icon="el-third-icon-delete"
             type="danger"
             @click="handleDelete(row,$index)"
           >

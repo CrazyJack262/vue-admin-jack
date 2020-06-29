@@ -6,13 +6,13 @@
           <dividing-line :title="'菜单'" />
           <div style="margin-top: 10px">
             <el-input v-model="filterText" placeholder="菜单名称" style="margin-bottom:30px;width: 190px" />
-            <el-button v-waves class="filter-item" type="primary" icon="el-third-icon-add-copy" @click="handleMenuAdd">
+            <el-button v-waves class="filter-item" type="primary" @click="handleMenuAdd">
               新增
             </el-button>
-            <el-button v-waves class="filter-item" type="primary" icon="el-third-icon-edit" @click="handleMenuEdit">
+            <el-button v-waves class="filter-item" type="primary" @click="handleMenuEdit">
               编辑
             </el-button>
-            <el-button v-waves class="filter-item" type="danger" icon="el-third-icon-delete" @click="handleMenuDelete">
+            <el-button v-waves class="filter-item" type="danger" @click="handleMenuDelete">
               删除
             </el-button>
           </div>
@@ -26,6 +26,7 @@
             node-key="id"
             default-expand-all
             :expand-on-click-node="false"
+            style="margin-bottom: 10px"
             @node-click="nodeClick"
           />
         </div>
@@ -41,10 +42,10 @@
               style="margin-bottom:30px;width: 270px"
               @keyup.enter.native="handleSearch"
             />
-            <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleSearch">
+            <el-button v-waves class="filter-item" type="primary" @click="handleSearch">
               查询
             </el-button>
-            <el-button v-waves class="filter-item" type="primary" icon="el-third-icon-add-copy" @click="handleAdd">
+            <el-button v-waves class="filter-item" type="primary" @click="handleAdd">
               新增
             </el-button>
           </div>
