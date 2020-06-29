@@ -201,7 +201,7 @@ export const constantRoutes = [
           {
             path: 'menu-config',
             component: () => import('@/views/manage/role/menu'),
-            meta: { title: '功能权限' }
+            meta: { title: '菜单权限' }
           }
         ]
       },

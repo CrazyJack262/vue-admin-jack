@@ -1,7 +1,7 @@
 <template>
-  <dib>
+  <div>
     menu
-  </dib>
+  </div>
 </template>
 
 <script>

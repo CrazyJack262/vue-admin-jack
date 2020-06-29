@@ -87,10 +87,10 @@
               </el-button>
               <el-button
                 size="mini"
-                type="success"
+                type="danger"
                 @click="handleDelete(row,$index)"
               >
-                移除
+                删除
               </el-button>
             </template>
           </el-table-column>
@@ -188,8 +188,9 @@
 import waves from '@/directive/waves' // waves directive
 import DividingLine from '@/components/DividingLine'
 import Pagination from '@/components/Pagination'
-import { getById, getTrees, getTreeList, updateMenuById, saveMenu, deleteMenuById } from '@/api/menu'
-import { saveResource, searchResource, updateResourceById } from '@/api/resource'
+import { deleteMenuById, getById, getTreeList, getTrees, saveMenu, updateMenuById } from '@/api/menu'
+import { deleteResourceById, saveResource, searchResource, updateResourceById } from '@/api/resource'
+
 export default {
   name: 'Menu',
   components: { DividingLine, Pagination },
@@ -363,6 +364,37 @@ export default {
       this.$nextTick(() => {
         this.$refs['resourceDataForm'].clearValidate()
       })
+    },
+    handleDelete(row, index) {
+      this.$confirm('确定删除 ' + row.resourceName + ' 资源？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteResourceById(row.id).then(response => {
+          const data = response.data
+          if (data) {
+            this.$notify({
+              title: '成功',
+              message: '资源删除成功！',
+              type: 'success',
+              duration: 2000
+            })
+            this.list.splice(index, 1)
+            this.total--
+          } else {
+            this.$notify({
+              title: '失败',
+              message: '资源删除失败！',
+              type: 'error',
+              duration: 2000
+            })
+          }
+        })
+      }).catch(
+        action => {
+        }
+      )
     },
     handleMenuEdit() {
       if (this.tempMenu.id === undefined) {
