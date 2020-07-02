@@ -7,6 +7,13 @@ export function getTrees() {
   })
 }
 
+export function getPcTrees() {
+  return request({
+    url: '/menu/pcTrees',
+    method: 'get'
+  })
+}
+
 export function getTreeList() {
   return request({
     url: '/menu/listAll',

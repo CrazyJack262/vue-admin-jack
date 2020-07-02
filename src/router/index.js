@@ -36,13 +36,6 @@ export const constantRoutes = [
     component: () => import('@/views/login/index'),
     hidden: true
   },
-
-  {
-    path: '/404',
-    component: () => import('@/views/404'),
-    hidden: true
-  },
-
   {
     path: '/',
     component: Layout,
@@ -53,7 +46,16 @@ export const constantRoutes = [
       component: () => import('@/views/dashboard/index'),
       meta: { title: '主页', icon: 'home' }
     }]
-  },
+  }
+
+]
+
+export const asyncRoutes = [
+  // 404 page must be placed at the end !!!
+  { path: '*', redirect: '/404', hidden: true }
+]
+
+export const jackRoutes = [
   {
     path: '/manage',
     component: Layout,
@@ -119,10 +121,7 @@ export const constantRoutes = [
         meta: { title: '开发文档' }
       }
     ]
-  },
-
-  // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  }
 ]
 
 const createRouter = () => new Router({
