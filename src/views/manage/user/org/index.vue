@@ -237,7 +237,7 @@ import { searchOrgList } from '@/api/user'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import DividingLine from '@/components/DividingLine'
-import { deleteOrgById, getOrgList, getTrees, saveOrg, updateOrgyId, saveOrgUser, deleteOrgUserByUserId } from '@/api/org'
+import { deleteOrgById, getOrgList, getTrees, saveOrg, updateOrgById, saveOrgUser, deleteOrgUserByUserId } from '@/api/org'
 
 export default {
   name: 'Org',
@@ -544,7 +544,7 @@ export default {
       this.$refs['orgDataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.tempOrg)
-          updateOrgyId(tempData).then((response) => {
+          updateOrgById(tempData).then((response) => {
             this.orgDialogFormVisible = false
             if (response.data === true) {
               this.$notify({
