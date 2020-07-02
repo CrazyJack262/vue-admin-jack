@@ -108,8 +108,13 @@ export const jackRoutes = [
             meta: { title: '角色管理' }
           },
           {
+            path: 'role-user-config',
+            component: () => import('@/views/manage/role/user/index'),
+            meta: { title: '角色配置' }
+          },
+          {
             path: 'menu-config',
-            component: () => import('@/views/manage/role/menu'),
+            component: () => import('@/views/manage/role/menu/index'),
             meta: { title: '菜单权限' }
           }
         ]

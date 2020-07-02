@@ -31,6 +31,14 @@ export function searchOrgList(query) {
   })
 }
 
+export function searchRoleList(query) {
+  return request({
+    url: '/users/role/search',
+    method: 'get',
+    params: query
+  })
+}
+
 export function saveUser(data) {
   return request({
     url: '/users',

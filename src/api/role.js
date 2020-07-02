@@ -52,3 +52,18 @@ export function deleteRoleById(id) {
   })
 }
 
+export function deleteRoleUserByUserId(id) {
+  return request({
+    url: '/roleUser/' + id,
+    method: 'delete'
+  })
+}
+
+export function saveRoleUser(data) {
+  return request({
+    url: '/roleUser',
+    method: 'post',
+    data
+  })
+}
+

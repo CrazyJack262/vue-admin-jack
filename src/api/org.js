@@ -37,6 +37,7 @@ export function saveOrgUser(data) {
     data
   })
 }
+
 export function deleteOrgUserByUserId(id) {
   return request({
     url: '/orgUser/' + id,

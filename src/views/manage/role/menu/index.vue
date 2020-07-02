@@ -45,7 +45,6 @@
             default-expand-all
             :expand-on-click-node="false"
             style="margin-bottom: 10px"
-            :default-checked-keys="checkedData"
           />
         </div>
       </el-col>
@@ -79,8 +78,7 @@ export default {
         roleId: undefined,
         menuIdList: undefined
       },
-      menuTitle: '菜单',
-      checkedData: undefined
+      menuTitle: '菜单'
     }
   },
   watch: {
@@ -115,7 +113,7 @@ export default {
         })
         return
       }
-      const checkedKeys = this.$refs.tree.getCheckedKeys()
+      const checkedKeys = this.$refs.tree.getCheckedKeys().concat(this.$refs.tree.getHalfCheckedKeys())
       this.tempData.menuIdList = checkedKeys
       saveRoleMenu(this.tempData).then((response) => {
         if (response.data === true) {
@@ -130,7 +128,13 @@ export default {
     },
     getMenuByRole(roleId) {
       getMenuByRoleId(roleId).then(response => {
-        this.checkedData = response.data
+        const data = response.data
+        data.forEach((i, n) => {
+          const node = this.$refs.tree.getNode(i)
+          if (node.isLeaf) {
+            this.$refs.tree.setChecked(node, true)
+          }
+        })
       })
     },
     roleClick(row) {

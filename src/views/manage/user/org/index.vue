@@ -118,7 +118,7 @@
     </el-row>
     <!--新增部门用户-->
     <el-dialog :title="textMap['create']" :visible.sync="dialogFormVisible">
-      <div style="margin-top: 10px">
+      <div>
         <el-input
           v-model="selectListQuery.username"
           placeholder="用户名称"
@@ -171,11 +171,6 @@
           <el-table-column label="备注" align="center">
             <template slot-scope="{row}">
               <span>{{ row.remark }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column v-if="false" label="版本号">
-            <template slot-scope="{row}">
-              <span>{{ row.version }}</span>
             </template>
           </el-table-column>
           <el-table-column label="状态" class-name="status-col" align="center" min-width="30">
