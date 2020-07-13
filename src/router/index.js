@@ -131,6 +131,7 @@ export const jackRoutes = [
 
 const createRouter = () => new Router({
   mode: 'history',
+  base: '/view/',
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
