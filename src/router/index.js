@@ -67,6 +67,7 @@ export const jackRoutes = [
     children: [
       {
         path: 'manage-user',
+        name: 'manage-user',
         component: () => import('@/views/manage/user/index'), // Parent router-view
         meta: { title: '用户管理' },
         children: [
@@ -86,12 +87,14 @@ export const jackRoutes = [
       },
       {
         path: 'manage-resource',
+        name: 'manage-resource',
         component: () => import('@/views/manage/resource/index'),
         meta: { title: '资源管理' },
         alwaysShow: true,
         children: [
           {
             path: 'config',
+            name: 'config',
             component: () => import('@/views/manage/resource/config'),
             meta: { title: '资源配置' }
           }
@@ -99,21 +102,25 @@ export const jackRoutes = [
       },
       {
         path: 'manage-role',
+        name: 'manage-role',
         component: () => import('@/views/manage/role/index'),
         meta: { title: '权限管理' },
         children: [
           {
             path: 'role-config',
+            name: 'role-config',
             component: () => import('@/views/manage/role/config'),
             meta: { title: '角色管理' }
           },
           {
             path: 'role-user-config',
+            name: 'role-user-config',
             component: () => import('@/views/manage/role/user/index'),
             meta: { title: '角色配置' }
           },
           {
             path: 'menu-config',
+            name: 'menu-config',
             component: () => import('@/views/manage/role/menu/index'),
             meta: { title: '菜单权限' }
           }
