@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container shadow">
+  <div class="app-container shadow" style="margin-top: 20px">
     <dividing-line :title="'用户管理'" />
     <div class="filter-container" style="margin-top: 10px">
       <el-input v-model="listQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleSearch" />
